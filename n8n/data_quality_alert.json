@@ -1,0 +1,235 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8f2fc59e-b536-4ea6-b8c2-21505e0c070d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c7611ad5-7768-4291-b0e1-63b979d119d6",
+              "name": "message",
+              "value": "Dataset Passed Validation. No Missing Values Found. Ready for ML Pipeline.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        96
+      ],
+      "id": "79becfd1-853c-4d83-89a3-4223349ed7c8",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      missing_values: 0,\n      status: \"PASS\"\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b3f4ba22-780c-46cf-9f27-e2d979ee42db",
+      "name": "Data quality check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "278e047a-5374-4a6a-9bf2-ebae89a6dbc2",
+              "leftValue": "={{$json.missing_values}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "d6cc2a7d-f405-4de4-8396-747566a9e5b3",
+      "name": "Missing value check"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b251e13a-5342-4e1a-a9d9-bfa9fc12ff33",
+              "name": "message",
+              "value": "ALERT: Missing values detected in Swiggy dataset. Please review the data immediately.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "8dd0c83e-5f18-4729-83a5-3f0541e000c0",
+      "name": "Validation passed"
+    },
+    {
+      "parameters": {
+        "sendTo": "gorlisanjana143@gmail.com",
+        "subject": "Exclusive 20% Discount for You",
+        "emailType": "text",
+        "message": "Dear Customer,\n\nWe miss you! Enjoy an exclusive 20% discount on your next Swiggy order. We look forward to serving you again.\n\nBest Regards,\nSwiggy Team\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "b177089c-176f-4deb-a510-e271f9f8544f",
+      "name": "Send a message",
+      "webhookId": "eb01dbf9-7e37-499c-8399-405b86749bfe",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ywZxo4Ajd62hxyMN",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "gorlisanjana143@gmail.com",
+        "subject": "Swiggy Customer Appreciation Campaign",
+        "emailType": "text",
+        "message": "Dear Customer,\n\nThank you for being a valued Swiggy customer. We appreciate your continued support and look forward to serving you again soon.\n\nBest Regards,\nSwiggy Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        96
+      ],
+      "id": "6f64a3a0-8d58-436c-8bde-eef2966903b8",
+      "name": "Send a message1",
+      "webhookId": "71a9bd52-15f1-44be-8291-138976fd589f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "QPNQdzAsGoRkHUaL",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Data quality check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data quality check": {
+      "main": [
+        [
+          {
+            "node": "Missing value check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Missing value check": {
+      "main": [
+        [
+          {
+            "node": "Validation passed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validation passed": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "03f8d6ff-b877-422c-af89-ff9109caa41d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "109f42d0b5bdd25feca7c2d323434119522ca4954d4844b1587656a5310ae01e"
+  },
+  "nodeGroups": [],
+  "id": "dqPo5EuOJagBZpxF",
+  "tags": []
+}
